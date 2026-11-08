@@ -1,7 +1,15 @@
-export const isValidGuess = (guess: string, length: number, base: number): boolean => {
-  void guess;
-  void length;
-  void base;
+import { createDigitValidator } from './createDigitValidator.js';
 
-  throw new Error('Not implemented');
+export const isValidGuess = (guess: string, length: number, base: number): boolean => {
+  if (guess.length !== length) {
+    return false;
+  }
+
+  const isValidDigit = createDigitValidator(base);
+
+  const containsOnlyValidDigits = [...guess].every(isValidDigit);
+
+  const containsUniqueDigits = new Set(guess.toLowerCase()).size === length;
+
+  return containsOnlyValidDigits && containsUniqueDigits;
 };
