@@ -1,6 +1,13 @@
 export const evaluateGuess = (secret: string, guess: string): { bulls: number; cows: number } => {
-  void secret;
-  void guess;
+  const secretDigits = secret.toLowerCase().split('');
+  const guessDigits = guess.toLowerCase().split('');
 
-  throw new Error('Not implemented');
+  const bulls = guessDigits.filter((digit, index) => digit === secretDigits[index]).length;
+
+  const matchingDigits = guessDigits.filter((digit) => secretDigits.includes(digit)).length;
+
+  return {
+    bulls,
+    cows: matchingDigits - bulls,
+  };
 };
