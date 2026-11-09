@@ -135,6 +135,61 @@ select {
   outline-offset: 3px;
 }
 
+.game-card {
+  margin-top: 24px;
+  padding: 32px;
+  border: 1px solid #e3e8e1;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 12px 36px rgb(32 48 35 / 5%);
+}
+
+.game-card[hidden] {
+  display: none;
+}
+
+.game-title {
+  margin: 0;
+  font-size: 24px;
+}
+
+.game-description {
+  margin: 8px 0 24px;
+  color: #718075;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.game-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.game-stat {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #f3f5f2;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.history-title {
+  margin: 0 0 16px;
+  font-size: 18px;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding-left: 24px;
+  color: #718075;
+}
+
 @media (max-width: 560px) {
   .app-shell {
     padding: 44px 0;

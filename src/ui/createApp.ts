@@ -62,6 +62,7 @@ export const createApp = (): HTMLElement => {
   header.append(eyebrow, title, description);
 
   const setupSection = createElement('section', 'setup-card');
+  setupSection.id = 'setup-section';
   setupSection.setAttribute('aria-labelledby', 'setup-title');
 
   const setupTitle = createElement('h2', 'setup-title', 'Новая игра');
@@ -104,11 +105,35 @@ export const createApp = (): HTMLElement => {
 
   const startButton = createElement('button', 'start-button', 'Начать игру');
 
+  startButton.id = 'start-button';
   startButton.type = 'button';
 
+  const gameSection = createElement('section', 'game-card');
+  gameSection.id = 'game-section';
+  gameSection.hidden = true;
+  gameSection.setAttribute('aria-labelledby', 'game-title');
+
+  const gameTitle = createElement('h2', 'game-title', 'Игра началась');
+
+  const gameDescription = createElement(
+    'p',
+    'game-description',
+    'Секретная комбинация загадана. Попробуй её угадать.',
+  );
+
+  const gameStats = createElement('div', 'game-stats');
+  const attemptsCount = createElement('p', 'game-stat', 'Попыток: 0');
+  const timerValue = createElement('p', 'game-stat', 'Время: 00:00');
+  const historyTitle = createElement('h3', 'history-title', 'История попыток');
+
+  const historyList = createElement('ol', 'history-list');
+  historyList.setAttribute('aria-live', 'polite');
+
+  gameStats.append(attemptsCount, timerValue);
+  gameSection.append(gameTitle, gameDescription, gameStats, historyTitle, historyList);
   setupSection.append(setupTitle, setupDescription, settingsGrid, startButton);
 
-  app.append(header, setupSection);
+  app.append(header, setupSection, gameSection);
 
   return app;
 };
