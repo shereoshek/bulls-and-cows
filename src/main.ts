@@ -1,6 +1,7 @@
 import { createDigitValidator } from './game/createDigitValidator.js';
 import { createInitialGameState } from './game/createInitialGameState.js';
 import { isValidGuess } from './game/isValidGuess.js';
+import { resetGame } from './game/resetGame.js';
 import { startGame } from './game/startGame.js';
 import { submitGuess } from './game/submitGuess.js';
 import { updateGameSettings } from './game/updateGameSettings.js';
@@ -23,16 +24,23 @@ const gameSection = document.querySelector<HTMLElement>('#game-section');
 
 const guessForm = document.querySelector<HTMLFormElement>('#guess-form');
 const guessInput = document.querySelector<HTMLInputElement>('#guess-input');
+
 const submitButton = document.querySelector<HTMLButtonElement>('#submit-guess-button');
+
 const guessFeedback = document.querySelector<HTMLParagraphElement>('#guess-feedback');
 
 const attemptsCount = document.querySelector<HTMLParagraphElement>('#attempts-count');
+
 const timerValue = document.querySelector<HTMLParagraphElement>('#timer-value');
 const historyList = document.querySelector<HTMLOListElement>('#history-list');
 
 const gameTitle = document.querySelector<HTMLHeadingElement>('#game-title');
+
 const gameDescription = document.querySelector<HTMLParagraphElement>('.game-description');
 
+const newGameButton = document.querySelector<HTMLButtonElement>('#new-game-button');
+
+// Проверяем наличие всех необходимых элементов интерфейса.
 if (
   !baseSelect ||
   !lengthSelect ||
@@ -47,7 +55,8 @@ if (
   !timerValue ||
   !historyList ||
   !gameTitle ||
-  !gameDescription
+  !gameDescription ||
+  !newGameButton
 ) {
   throw new Error('Required application elements were not found.');
 }
@@ -115,6 +124,7 @@ const stopTimer = (): void => {
   }
 };
 
+// Изменение системы счисления.
 baseSelect.addEventListener('change', () => {
   const base = Number(baseSelect.value);
 
@@ -133,6 +143,7 @@ baseSelect.addEventListener('change', () => {
   renderSettings();
 });
 
+// Изменение длины комбинации.
 lengthSelect.addEventListener('change', () => {
   const length = Number(lengthSelect.value);
 
@@ -149,6 +160,7 @@ lengthSelect.addEventListener('change', () => {
   renderSettings();
 });
 
+// Фильтрация символов при вводе.
 guessInput.addEventListener('input', () => {
   const isAllowedDigit = createDigitValidator(gameState.settings.base);
 
@@ -163,6 +175,7 @@ guessInput.addEventListener('input', () => {
   }
 });
 
+// Запуск нового игрового раунда.
 startButton.addEventListener('click', () => {
   const startedState = startGame(gameState);
 
@@ -187,12 +200,14 @@ startButton.addEventListener('click', () => {
   renderAttemptsCount();
   renderHistory();
   renderTimer();
+  clearFeedback();
 
   timerInterval = window.setInterval(renderTimer, 1000);
 
   guessInput.focus();
 });
 
+// Обработка отправленной попытки.
 guessForm.addEventListener('submit', (event) => {
   event.preventDefault();
 
@@ -228,6 +243,7 @@ guessForm.addEventListener('submit', (event) => {
   guessInput.value = '';
   clearFeedback();
 
+  // Обработка победы.
   if (gameState.status === 'won') {
     stopTimer();
     renderTimer();
@@ -247,4 +263,35 @@ guessForm.addEventListener('submit', (event) => {
   guessInput.focus();
 });
 
+// Возврат к настройкам без перезагрузки страницы.
+newGameButton.addEventListener('click', () => {
+  stopTimer();
+
+  gameState = resetGame(gameState);
+
+  baseSelect.disabled = false;
+  lengthSelect.disabled = false;
+  startButton.disabled = false;
+
+  guessInput.disabled = false;
+  submitButton.disabled = false;
+  guessInput.value = '';
+
+  setupSection.hidden = false;
+  gameSection.hidden = true;
+
+  gameTitle.textContent = 'Игра началась';
+
+  gameDescription.textContent = 'Секретная комбинация загадана. Попробуй её угадать.';
+
+  attemptsCount.textContent = 'Попыток: 0';
+  timerValue.textContent = 'Время: 00:00';
+
+  historyList.replaceChildren();
+  clearFeedback();
+
+  renderSettings();
+});
+
+// Первоначальная синхронизация интерфейса с GameState.
 renderSettings();

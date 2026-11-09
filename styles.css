@@ -254,6 +254,22 @@ select {
   line-height: 1.5;
 }
 
+.new-game-button {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 24px;
+  border: 1px solid #dce4dc;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #345e3d;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.new-game-button:hover {
+  background: #f3f5f2;
+}
+
 @media (max-width: 560px) {
   .app-shell {
     padding: 44px 0;

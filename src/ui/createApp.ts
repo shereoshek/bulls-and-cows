@@ -167,9 +167,21 @@ export const createApp = (): HTMLElement => {
   historyList.id = 'history-list';
   historyList.setAttribute('aria-live', 'polite');
 
+  const newGameButton = createElement('button', 'new-game-button', 'Новая игра');
+  newGameButton.id = 'new-game-button';
+  newGameButton.type = 'button';
+
   gameStats.append(attemptsCount, timerValue);
 
-  gameSection.append(gameTitle, gameDescription, gameStats, guessForm, historyTitle, historyList);
+  gameSection.append(
+    gameTitle,
+    gameDescription,
+    gameStats,
+    guessForm,
+    historyTitle,
+    historyList,
+    newGameButton,
+  );
 
   app.append(header, setupSection, gameSection);
 
