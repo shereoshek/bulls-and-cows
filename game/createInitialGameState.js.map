@@ -1,0 +1,1 @@
+{"version":3,"file":"createInitialGameState.js","sourceRoot":"","sources":["../../src/game/createInitialGameState.ts"],"names":[],"mappings":"AAEA,MAAM,CAAC,MAAM,sBAAsB,GAAG,GAAc,EAAE,CAAC,CAAC;IACtD,QAAQ,EAAE;QACR,MAAM,EAAE,CAAC;QACT,IAAI,EAAE,EAAE;KACT;IACD,MAAM,EAAE,OAAO;IACf,MAAM,EAAE,IAAI;IACZ,OAAO,EAAE,EAAE;IACX,SAAS,EAAE,IAAI;IACf,UAAU,EAAE,IAAI;CACjB,CAAC,CAAC"}
