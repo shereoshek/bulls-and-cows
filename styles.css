@@ -190,6 +190,70 @@ select {
   color: #718075;
 }
 
+.guess-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.guess-input {
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 16px;
+  border: 1px solid #dce4dc;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #202820;
+  font-size: 18px;
+  letter-spacing: 0.12em;
+}
+
+.guess-input:focus-visible {
+  outline: 3px solid rgb(83 135 95 / 20%);
+  border-color: #53875f;
+}
+
+.submit-button {
+  width: 100%;
+  min-height: 48px;
+  border: 0;
+  border-radius: 10px;
+  background: #345e3d;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.submit-button:hover {
+  background: #284b31;
+}
+
+.submit-button:disabled,
+.guess-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.guess-feedback {
+  margin: 0;
+  color: #a04438;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.guess-feedback[hidden] {
+  display: none;
+}
+
+.history-list li {
+  padding: 12px;
+  border-radius: 8px;
+  background: #f3f5f2;
+  color: #202820;
+  line-height: 1.5;
+}
+
 @media (max-width: 560px) {
   .app-shell {
     padding: 44px 0;

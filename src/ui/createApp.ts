@@ -104,9 +104,10 @@ export const createApp = (): HTMLElement => {
   settingsGrid.append(baseField, lengthField);
 
   const startButton = createElement('button', 'start-button', 'Начать игру');
-
   startButton.id = 'start-button';
   startButton.type = 'button';
+
+  setupSection.append(setupTitle, setupDescription, settingsGrid, startButton);
 
   const gameSection = createElement('section', 'game-card');
   gameSection.id = 'game-section';
@@ -114,6 +115,7 @@ export const createApp = (): HTMLElement => {
   gameSection.setAttribute('aria-labelledby', 'game-title');
 
   const gameTitle = createElement('h2', 'game-title', 'Игра началась');
+  gameTitle.id = 'game-title';
 
   const gameDescription = createElement(
     'p',
@@ -122,16 +124,52 @@ export const createApp = (): HTMLElement => {
   );
 
   const gameStats = createElement('div', 'game-stats');
+
   const attemptsCount = createElement('p', 'game-stat', 'Попыток: 0');
+  attemptsCount.id = 'attempts-count';
+
   const timerValue = createElement('p', 'game-stat', 'Время: 00:00');
+  timerValue.id = 'timer-value';
+
+  const guessForm = createElement('form', 'guess-form');
+  guessForm.id = 'guess-form';
+
+  const guessLabel = createElement('label', 'form-label', 'Твоя комбинация');
+  guessLabel.htmlFor = 'guess-input';
+
+  const guessInput = createElement('input', 'guess-input');
+  guessInput.id = 'guess-input';
+  guessInput.name = 'guess';
+  guessInput.type = 'text';
+  guessInput.inputMode = 'text';
+  guessInput.autocomplete = 'off';
+  guessInput.autocapitalize = 'characters';
+  guessInput.spellcheck = false;
+  guessInput.required = true;
+  guessInput.maxLength = 6;
+  guessInput.placeholder = 'Введи комбинацию';
+
+  const submitButton = createElement('button', 'submit-button', 'Проверить');
+  submitButton.id = 'submit-guess-button';
+  submitButton.type = 'submit';
+
+  const guessFeedback = createElement('p', 'guess-feedback');
+  guessFeedback.id = 'guess-feedback';
+  guessFeedback.hidden = true;
+  guessFeedback.setAttribute('role', 'status');
+  guessFeedback.setAttribute('aria-live', 'polite');
+
+  guessForm.append(guessLabel, guessInput, submitButton, guessFeedback);
+
   const historyTitle = createElement('h3', 'history-title', 'История попыток');
 
   const historyList = createElement('ol', 'history-list');
+  historyList.id = 'history-list';
   historyList.setAttribute('aria-live', 'polite');
 
   gameStats.append(attemptsCount, timerValue);
-  gameSection.append(gameTitle, gameDescription, gameStats, historyTitle, historyList);
-  setupSection.append(setupTitle, setupDescription, settingsGrid, startButton);
+
+  gameSection.append(gameTitle, gameDescription, gameStats, guessForm, historyTitle, historyList);
 
   app.append(header, setupSection, gameSection);
 
