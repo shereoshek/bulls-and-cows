@@ -9,6 +9,7 @@ import { submitGuess } from './game/submitGuess.js';
 import { updateGameSettings } from './game/updateGameSettings.js';
 import type { GameBase, GameLength, GameRecord } from './game/types.js';
 import { createApp } from './ui/createApp.js';
+import { countPossibleSecrets } from './game/countPossibleSecrets.js';
 
 const app = createApp();
 
@@ -51,6 +52,7 @@ const newGameButton = document.querySelector<HTMLButtonElement>('#new-game-butto
 const leaderboardEmpty = document.querySelector<HTMLParagraphElement>('#leaderboard-empty');
 const leaderboardTable = document.querySelector<HTMLTableElement>('#leaderboard-table');
 const leaderboardBody = document.querySelector<HTMLTableSectionElement>('#leaderboard-body');
+const possibilitiesCount = document.querySelector<HTMLParagraphElement>('#possibilities-count');
 
 if (
   !baseSelect ||
@@ -70,6 +72,7 @@ if (
   !newGameButton ||
   !leaderboardEmpty ||
   !leaderboardTable ||
+  !possibilitiesCount ||
   !leaderboardBody
 ) {
   throw new Error('Required application elements were not found.');
@@ -95,6 +98,10 @@ const renderSettings = (): void => {
   Array.from(lengthSelect.options).forEach((option) => {
     option.disabled = Number(option.value) > gameState.settings.base;
   });
+
+  const possibleSecrets = countPossibleSecrets(gameState.settings.length, gameState.settings.base);
+
+  possibilitiesCount.textContent = `Возможных секретных комбинаций: ${new Intl.NumberFormat('ru-RU').format(possibleSecrets)}`;
 };
 
 const showFeedback = (message: string): void => {

@@ -434,6 +434,17 @@ body {
   font-weight: 700;
 }
 
+.possibilities-count {
+  margin: 20px 0 0;
+  padding: 12px 16px;
+  border: 1px solid var(--brass-border);
+  border-radius: 10px;
+  background: var(--brass-light);
+  color: var(--forest-green);
+  font-size: 14px;
+  font-weight: 600;
+}
+
 @media (max-width: 560px) {
   .app-shell {
     padding: 44px 0;

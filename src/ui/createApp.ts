@@ -105,11 +105,16 @@ export const createApp = (): HTMLElement => {
 
   settingsGrid.append(baseField, lengthField);
 
+  const possibilitiesCount = createElement('p', 'possibilities-count', 'Возможных комбинаций: —');
+
+  possibilitiesCount.id = 'possibilities-count';
+  possibilitiesCount.setAttribute('aria-live', 'polite');
+
   const startButton = createElement('button', 'start-button', 'Начать игру');
   startButton.id = 'start-button';
   startButton.type = 'button';
 
-  setupSection.append(setupTitle, setupDescription, settingsGrid, startButton);
+  setupSection.append(setupTitle, setupDescription, settingsGrid, possibilitiesCount, startButton);
 
   // Game screen
   const gameSection = createElement('section', 'game-card');
