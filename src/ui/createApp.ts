@@ -50,6 +50,7 @@ const createSelectField = (
 export const createApp = (): HTMLElement => {
   const app = createElement('main', 'app-shell');
 
+  // Header
   const header = createElement('header', 'app-header');
   const eyebrow = createElement('p', 'app-eyebrow', 'LOGIC GAME');
   const title = createElement('h1', 'app-title', 'Bulls & Cows');
@@ -61,6 +62,7 @@ export const createApp = (): HTMLElement => {
 
   header.append(eyebrow, title, description);
 
+  // Settings screen
   const setupSection = createElement('section', 'setup-card');
   setupSection.id = 'setup-section';
   setupSection.setAttribute('aria-labelledby', 'setup-title');
@@ -109,6 +111,7 @@ export const createApp = (): HTMLElement => {
 
   setupSection.append(setupTitle, setupDescription, settingsGrid, startButton);
 
+  // Game screen
   const gameSection = createElement('section', 'game-card');
   gameSection.id = 'game-section';
   gameSection.hidden = true;
@@ -183,7 +186,58 @@ export const createApp = (): HTMLElement => {
     newGameButton,
   );
 
-  app.append(header, setupSection, gameSection);
+  // Leaderboard
+  const leaderboardSection = createElement('section', 'leaderboard-card');
+  leaderboardSection.id = 'leaderboard-section';
+  leaderboardSection.setAttribute('aria-labelledby', 'leaderboard-title');
+
+  const leaderboardTitle = createElement('h2', 'leaderboard-title', 'Таблица рекордов');
+  leaderboardTitle.id = 'leaderboard-title';
+
+  const leaderboardDescription = createElement(
+    'p',
+    'leaderboard-description',
+    'Твои десять лучших результатов.',
+  );
+
+  const leaderboardEmpty = createElement(
+    'p',
+    'leaderboard-empty',
+    'Пока рекордов нет. Победи в игре, чтобы попасть в таблицу!',
+  );
+  leaderboardEmpty.id = 'leaderboard-empty';
+
+  const leaderboardTableWrapper = createElement('div', 'leaderboard-table-wrapper');
+
+  const leaderboardTable = createElement('table', 'leaderboard-table');
+  leaderboardTable.id = 'leaderboard-table';
+  leaderboardTable.hidden = true;
+
+  const tableHead = createElement('thead', 'leaderboard-head');
+  const headerRow = createElement('tr', 'leaderboard-header-row');
+
+  ['Место', 'Настройки', 'Попытки', 'Время', 'Дата'].forEach((labelText) => {
+    const cell = createElement('th', '', labelText);
+    cell.scope = 'col';
+    headerRow.append(cell);
+  });
+
+  tableHead.append(headerRow);
+
+  const leaderboardBody = createElement('tbody', 'leaderboard-body');
+  leaderboardBody.id = 'leaderboard-body';
+
+  leaderboardTable.append(tableHead, leaderboardBody);
+  leaderboardTableWrapper.append(leaderboardTable);
+
+  leaderboardSection.append(
+    leaderboardTitle,
+    leaderboardDescription,
+    leaderboardEmpty,
+    leaderboardTableWrapper,
+  );
+
+  app.append(header, setupSection, gameSection, leaderboardSection);
 
   return app;
 };

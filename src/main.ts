@@ -1,11 +1,13 @@
 import { createDigitValidator } from './game/createDigitValidator.js';
+import { createGameRecord } from './game/createGameRecord.js';
 import { createInitialGameState } from './game/createInitialGameState.js';
 import { isValidGuess } from './game/isValidGuess.js';
+import { loadGameRecords, saveGameRecord } from './game/gameRecordsStorage.js';
 import { resetGame } from './game/resetGame.js';
 import { startGame } from './game/startGame.js';
 import { submitGuess } from './game/submitGuess.js';
 import { updateGameSettings } from './game/updateGameSettings.js';
-import type { GameBase, GameLength } from './game/types.js';
+import type { GameBase, GameLength, GameRecord } from './game/types.js';
 import { createApp } from './ui/createApp.js';
 
 const app = createApp();
@@ -13,7 +15,15 @@ const app = createApp();
 document.body.prepend(app);
 
 let gameState = createInitialGameState();
+let gameRecords: GameRecord[] = [];
 let timerInterval: number | null = null;
+
+// Загружаем рекорды при открытии приложения.
+try {
+  gameRecords = loadGameRecords();
+} catch {
+  gameRecords = [];
+}
 
 const baseSelect = document.querySelector<HTMLSelectElement>('#base-select');
 const lengthSelect = document.querySelector<HTMLSelectElement>('#length-select');
@@ -30,17 +40,18 @@ const submitButton = document.querySelector<HTMLButtonElement>('#submit-guess-bu
 const guessFeedback = document.querySelector<HTMLParagraphElement>('#guess-feedback');
 
 const attemptsCount = document.querySelector<HTMLParagraphElement>('#attempts-count');
-
 const timerValue = document.querySelector<HTMLParagraphElement>('#timer-value');
 const historyList = document.querySelector<HTMLOListElement>('#history-list');
 
 const gameTitle = document.querySelector<HTMLHeadingElement>('#game-title');
-
 const gameDescription = document.querySelector<HTMLParagraphElement>('.game-description');
 
 const newGameButton = document.querySelector<HTMLButtonElement>('#new-game-button');
 
-// Проверяем наличие всех необходимых элементов интерфейса.
+const leaderboardEmpty = document.querySelector<HTMLParagraphElement>('#leaderboard-empty');
+const leaderboardTable = document.querySelector<HTMLTableElement>('#leaderboard-table');
+const leaderboardBody = document.querySelector<HTMLTableSectionElement>('#leaderboard-body');
+
 if (
   !baseSelect ||
   !lengthSelect ||
@@ -56,10 +67,20 @@ if (
   !historyList ||
   !gameTitle ||
   !gameDescription ||
-  !newGameButton
+  !newGameButton ||
+  !leaderboardEmpty ||
+  !leaderboardTable ||
+  !leaderboardBody
 ) {
   throw new Error('Required application elements were not found.');
 }
+
+const baseLabels: Record<GameBase, string> = {
+  2: 'BIN',
+  8: 'OCT',
+  10: 'DEC',
+  16: 'HEX',
+};
 
 const isGameBase = (value: number): value is GameBase =>
   value === 2 || value === 8 || value === 10 || value === 16;
@@ -100,6 +121,49 @@ const renderHistory = (): void => {
   });
 
   historyList.replaceChildren(...entries);
+};
+
+const formatDuration = (durationMs: number): string => {
+  const totalSeconds = Math.floor(durationMs / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+};
+
+const formatCompletedAt = (timestamp: number): string =>
+  new Intl.DateTimeFormat('ru-RU', {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  }).format(new Date(timestamp));
+
+const renderLeaderboard = (): void => {
+  const rows = gameRecords.map((record, index) => {
+    const row = document.createElement('tr');
+
+    const values = [
+      String(index + 1),
+      `${baseLabels[record.settings.base]} · ${record.settings.length}`,
+      String(record.attempts),
+      formatDuration(record.durationMs),
+      formatCompletedAt(record.completedAt),
+    ];
+
+    values.forEach((value) => {
+      const cell = document.createElement('td');
+      cell.textContent = value;
+      row.append(cell);
+    });
+
+    return row;
+  });
+
+  leaderboardBody.replaceChildren(...rows);
+
+  const hasRecords = gameRecords.length > 0;
+
+  leaderboardEmpty.hidden = hasRecords;
+  leaderboardTable.hidden = !hasRecords;
 };
 
 const renderTimer = (): void => {
@@ -175,7 +239,7 @@ guessInput.addEventListener('input', () => {
   }
 });
 
-// Запуск нового игрового раунда.
+// Запуск игрового раунда.
 startButton.addEventListener('click', () => {
   const startedState = startGame(gameState);
 
@@ -207,7 +271,7 @@ startButton.addEventListener('click', () => {
   guessInput.focus();
 });
 
-// Обработка отправленной попытки.
+// Отправка попытки.
 guessForm.addEventListener('submit', (event) => {
   event.preventDefault();
 
@@ -243,7 +307,7 @@ guessForm.addEventListener('submit', (event) => {
   guessInput.value = '';
   clearFeedback();
 
-  // Обработка победы.
+  // Если игрок победил, сохраняем рекорд.
   if (gameState.status === 'won') {
     stopTimer();
     renderTimer();
@@ -257,13 +321,24 @@ guessForm.addEventListener('submit', (event) => {
       `Ты угадала комбинацию ${gameState.secret?.toUpperCase()} за ` +
       `${gameState.history.length} попыток.`;
 
+    const record = createGameRecord(gameState);
+
+    if (record !== null) {
+      try {
+        gameRecords = saveGameRecord(record);
+        renderLeaderboard();
+      } catch {
+        showFeedback('Победа засчитана, но не удалось сохранить рекорд в браузере.');
+      }
+    }
+
     return;
   }
 
   guessInput.focus();
 });
 
-// Возврат к настройкам без перезагрузки страницы.
+// Возврат к настройкам без перезагрузки.
 newGameButton.addEventListener('click', () => {
   stopTimer();
 
@@ -293,5 +368,6 @@ newGameButton.addEventListener('click', () => {
   renderSettings();
 });
 
-// Первоначальная синхронизация интерфейса с GameState.
+// Первоначальное отображение настроек и сохранённых рекордов.
 renderSettings();
+renderLeaderboard();
