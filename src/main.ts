@@ -91,7 +91,7 @@ const renderAttemptsCount = (): void => {
 };
 
 const renderHistory = (): void => {
-  const entries = gameState.history.map((entry) => {
+  const entries = [...gameState.history].reverse().map((entry) => {
     const item = document.createElement('li');
 
     item.textContent = `${entry.guess.toUpperCase()} — Быки: ${entry.bulls}, коровы: ${entry.cows}`;
