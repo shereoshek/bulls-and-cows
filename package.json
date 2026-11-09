@@ -1,0 +1,47 @@
+{
+  "name": "bulls-and-cows",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Functional programming game — Bulls and Cows",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && node scripts/prepare-deploy.mjs",
+    "deploy": "npm run build && gh-pages -d dist -b gh-pages",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css,html}": [
+      "prettier --write"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shereoshek/bulls-and-cows.git"
+  },
+  "bugs": {
+    "url": "https://github.com/shereoshek/bulls-and-cows/issues"
+  },
+  "homepage": "https://github.com/shereoshek/bulls-and-cows#readme",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.14.0",
+    "eslint-config-prettier": "^10.1.8",
+    "gh-pages": "^6.3.0",
+    "globals": "^17.14.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
+    "prettier": "^3.9.10",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.1.0"
+  }
+}
