@@ -1,21 +1,79 @@
+import { sortGameRecords } from './sortGameRecords.js';
 import type { GameRecord } from './types.js';
 
 type RecordStorage = Pick<Storage, 'getItem' | 'setItem'>;
 
 export const GAME_RECORDS_STORAGE_KEY = 'bulls-and-cows-records';
 
-export const loadGameRecords = (storage: RecordStorage = window.localStorage): GameRecord[] => {
-  void storage;
+const isGameRecord = (value: unknown): value is GameRecord => {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
 
-  throw new Error('Not implemented');
+  const candidate = value as Record<string, unknown>;
+  const settings = candidate.settings;
+
+  if (typeof settings !== 'object' || settings === null) {
+    return false;
+  }
+
+  const candidateSettings = settings as Record<string, unknown>;
+
+  const base = candidateSettings.base;
+  const length = candidateSettings.length;
+
+  const isValidBase = typeof base === 'number' && [2, 8, 10, 16].includes(base);
+
+  const isValidLength =
+    typeof length === 'number' && Number.isInteger(length) && length >= 2 && length <= 6;
+
+  return (
+    isValidBase &&
+    isValidLength &&
+    length <= base &&
+    typeof candidate.attempts === 'number' &&
+    Number.isInteger(candidate.attempts) &&
+    candidate.attempts > 0 &&
+    typeof candidate.durationMs === 'number' &&
+    Number.isFinite(candidate.durationMs) &&
+    candidate.durationMs >= 0 &&
+    typeof candidate.completedAt === 'number' &&
+    Number.isFinite(candidate.completedAt) &&
+    candidate.completedAt >= 0
+  );
+};
+
+export const loadGameRecords = (storage: RecordStorage = window.localStorage): GameRecord[] => {
+  const storedRecords = storage.getItem(GAME_RECORDS_STORAGE_KEY);
+
+  if (storedRecords === null) {
+    return [];
+  }
+
+  try {
+    const parsedRecords: unknown = JSON.parse(storedRecords);
+
+    if (!Array.isArray(parsedRecords)) {
+      return [];
+    }
+
+    const validRecords = parsedRecords.filter(isGameRecord);
+
+    return sortGameRecords(validRecords);
+  } catch {
+    return [];
+  }
 };
 
 export const saveGameRecord = (
   record: GameRecord,
   storage: RecordStorage = window.localStorage,
 ): GameRecord[] => {
-  void record;
-  void storage;
+  const existingRecords = loadGameRecords(storage);
 
-  throw new Error('Not implemented');
+  const updatedRecords = sortGameRecords([...existingRecords, record]);
+
+  storage.setItem(GAME_RECORDS_STORAGE_KEY, JSON.stringify(updatedRecords));
+
+  return updatedRecords;
 };
