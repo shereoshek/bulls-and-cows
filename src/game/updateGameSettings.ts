@@ -1,8 +1,12 @@
 import type { GameSettings, GameState } from './types.js';
 
 export const updateGameSettings = (state: GameState, settings: GameSettings): GameState => {
-  void state;
-  void settings;
+  if (state.status !== 'setup' || settings.length > settings.base) {
+    return state;
+  }
 
-  throw new Error('Not implemented');
+  return {
+    ...state,
+    settings: { ...settings },
+  };
 };
