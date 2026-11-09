@@ -5,6 +5,8 @@
   "description": "Functional programming game — Bulls and Cows",
   "type": "module",
   "scripts": {
+    "build": "tsc && node scripts/prepare-deploy.mjs",
+    "deploy": "npm run build && gh-pages -d dist -b gh-pages",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "lint": "eslint .",
@@ -33,6 +35,7 @@
     "@eslint/js": "^10.0.1",
     "eslint": "^10.14.0",
     "eslint-config-prettier": "^10.1.8",
+    "gh-pages": "^6.3.0",
     "globals": "^17.14.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.6.0",
