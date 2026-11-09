@@ -1,7 +1,11 @@
+import { createInitialGameState } from './createInitialGameState.js';
 import type { GameState } from './types.js';
 
 export const resetGame = (state: GameState): GameState => {
-  void state;
+  const initialState = createInitialGameState();
 
-  throw new Error('Not implemented');
+  return {
+    ...initialState,
+    settings: { ...state.settings },
+  };
 };
